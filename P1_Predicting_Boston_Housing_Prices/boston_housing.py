@@ -5,10 +5,9 @@ import numpy as np
 import pylab as pl
 from sklearn import datasets
 from sklearn.tree import DecisionTreeRegressor
-
-################################
-### ADD EXTRA LIBRARIES HERE ###
-################################
+from sklearn import cross_validation
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error, make_scorer
+from sklearn.grid_search import GridSearchCV
 
 
 def load_data():
@@ -25,29 +24,34 @@ def explore_city_data(city_data):
     housing_prices = city_data.target
     housing_features = city_data.data
 
-    ###################################
-    ### Step 1. YOUR CODE GOES HERE ###
-    ###################################
+    # Size of data
+    print "No. of data points: {}".format(housing_features.shape[0])
 
-    # Please calculate the following values using the Numpy library
-    # Size of data?
-    # Number of features?
-    # Minimum value?
-    # Maximum Value?
-    # Calculate mean?
+    # Number of features
+    print "No. of features: {}".format(housing_features.shape[1])
+    
+    # Minimum housing price
+    print "Minimum housing price: {}".format(min(housing_prices))
+    
+    # Maximum housing price
+    print "Maximum housing price: {}".format(max(housing_prices))
+    
+    # Mean housing price
+    print "Mean housing price: {}".format(np.mean(housing_prices))
+    
     # Calculate median?
+    print "Median housing price: {}".format(np.median(housing_prices))
+    
     # Calculate standard deviation?
+    print "Standard deviation of housing prices: {}".format(np.std(housing_prices))
 
 
 def performance_metric(label, prediction):
     """Calculate and return the appropriate performance metric."""
 
-    ###################################
-    ### Step 2. YOUR CODE GOES HERE ###
-    ###################################
+    mse = mean_squared_error(label, prediction)
 
-    # http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics
-    pass
+    return mse
 
 
 def split_data(city_data):
@@ -56,9 +60,8 @@ def split_data(city_data):
     # Get the features and labels from the Boston housing data
     X, y = city_data.data, city_data.target
 
-    ###################################
-    ### Step 3. YOUR CODE GOES HERE ###
-    ###################################
+    # Split up the dataset between training and testing
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.45, random_state=42)
 
     return X_train, y_train, X_test, y_test
 
@@ -151,18 +154,14 @@ def fit_predict_model(city_data):
     # Setup a Decision Tree Regressor
     regressor = DecisionTreeRegressor()
 
+    # Setup parameters and scores for model optimization through Grid Search
     parameters = {'max_depth':(1,2,3,4,5,6,7,8,9,10)}
+    scorer = make_scorer(mean_squared_error, greater_is_better=False)
+    gs = GridSearchCV(regressor, parameters, scoring=scorer)
+    gs.fit(X, y)
 
-    ###################################
-    ### Step 4. YOUR CODE GOES HERE ###
-    ###################################
-
-    # 1. Find the best performance metric
-    # should be the same as your performance_metric procedure
-    # http://scikit-learn.org/stable/modules/generated/sklearn.metrics.make_scorer.html
-
-    # 2. Use gridearch to fine tune the Decision Tree Regressor and find the best model
-    # http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV
+    # Select the best settings for regressor
+    reg = gs.best_estimator_
 
     # Fit the learner to the training data
     print "Final Model: "
@@ -182,6 +181,7 @@ def main():
 
     # Load data
     city_data = load_data()
+    # print city_data
 
     # Explore the data
     explore_city_data(city_data)
@@ -194,10 +194,10 @@ def main():
     for max_depth in max_depths:
         learning_curve(max_depth, X_train, y_train, X_test, y_test)
 
-    # Model Complexity Graph
+    # # Model Complexity Graph
     model_complexity(X_train, y_train, X_test, y_test)
 
-    # Tune and predict Model
+    # # Tune and predict Model
     fit_predict_model(city_data)
 
 
