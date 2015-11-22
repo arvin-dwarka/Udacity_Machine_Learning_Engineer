@@ -4,3 +4,4 @@ This repository contains projects for Udacity's Machine Learning Engineer Progra
 
 ###Projects:
 - **P1** - Predicting Boston Housing Prices
+- **P2** - Building a Student Intervention System
