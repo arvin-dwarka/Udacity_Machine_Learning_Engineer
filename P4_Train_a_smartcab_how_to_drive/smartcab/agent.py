@@ -25,7 +25,8 @@ class LearningAgent(Agent):
         # TODO: Update state
         
         # TODO: Select action according to your policy
-        action = None
+        moves = [None, 'forward', 'left', 'right']
+        action = random.choice(moves)
 
         # Execute action and get reward
         reward = self.env.act(self, action)

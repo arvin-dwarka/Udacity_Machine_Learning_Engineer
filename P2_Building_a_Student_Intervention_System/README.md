@@ -33,7 +33,7 @@ This is a classification problem. We are interested in the identifying students 
 - Number of students who passed: 265
 - Number of students who failed: 130
 - Number of features: 30
-- Graduation rate of the class: 67.00%
+- Graduation rate of the class: 67.09%
 
 
 ### 3. Preparing the Data
@@ -97,7 +97,7 @@ As the training set size increases the training and prediction time understandab
 
 ### 5. Choosing the Best Model
 
-Based on the constraints provided, the best model to chose from is the Support Vector Machine (SVM). The other learners tested performed poorly with increasing training set sizes compared to SVM. Although SVM has a costly training time complexity where the training time essentially doubles with each additional hundred dataset, it has a high performance that can handle large datasets well that are also unbalanced. Given the ambitious goal of reaching a 95% graduation rate, this processing time is a small price to pay.
+Based on the constraints provided, the best model to chose from is the Support Vector Machine (SVM). The other learners tested performed poorly with increasing training set sizes compared to SVM. The Random Forest Classifier had a much longer training time than SVM as a function of the number of trees and also has a lower F1 score. The Gaussian Naive Bayes learner had a very promising and simple training and predicting time, but yielded a lowerer F1 score compared to SVM and it did not have a good tuning potential.Although SVM has a costly training time complexity of O(n^3) where the training time essentially doubles with each additional hundred dataset, it has a high performance that can handle large datasets well that are also unbalanced. Given the ambitious goal of reaching a 95% graduation rate, this processing time is a small price to pay.
 
 Support Vector Machines are based on the concept of decision lines that define decision boundaries. A decision line is one that separates between different sets of objects. In other words, given labeled training data as is in this supervised learning case, the algorithm outputs a clear divide that categorizes new examples. SVM chooses the best decision line or divide where the distance between that line and the nearest observations of differing classes are the largest. This is formally known as achieving the largest margin. The left circle in the following image illustrates this well.
 

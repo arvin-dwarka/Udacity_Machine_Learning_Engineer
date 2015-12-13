@@ -84,7 +84,7 @@ class Simulator(object):
                     if self.quit or self.env.done:
                         break
 
-            if self.quit or self.env.done:
+            if self.quit:
                 break
 
     def render(self):
