@@ -16,7 +16,3 @@ Make sure you are in the top-level `smartcab` directory. Then run:
 OR:
 
 ```python -m smartcab.agent```
-
-## Develop
-
-Open `agent.py` and implement `LearningAgent`. Follow the `TODO`s in there for further instructions.
