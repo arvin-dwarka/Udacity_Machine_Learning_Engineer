@@ -54,6 +54,8 @@ class LearningAgent(Agent):
         self.reward += reward
 
         # TODO: Learn policy based on state, action, reward
+        self.state = (('light', inputs['light']), ('next_waypoint', self.next_waypoint))
+        
         if self.state not in self.Q_learner:
             possible_actions = {possible_action: 0 for possible_action in self.valid_actions}
             self.Q_learner[self.state] = possible_actions
