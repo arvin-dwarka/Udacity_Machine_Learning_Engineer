@@ -1,37 +1,32 @@
-# Creating Customer Segments
+# Project 3: Unsupervised Learning
+## Creating Customer Segments
 
-Unsupervised Learning Project
+### Install
 
-## Template code
+This project requires **Python 2.7** and the following Python libraries installed:
 
-In this directory (`customer_segments/`), run `jupyter notebook`, open `customer_segments.ipynb` and follow the instructions.
+- [NumPy](http://www.numpy.org/)
+- [Pandas](http://pandas.pydata.org)
+- [matplotlib](http://matplotlib.org/)
+- [scikit-learn](http://scikit-learn.org/stable/)
 
-Note: You need Python 2.7, NumPy, pandas, matplotlib and scikit-learn to work on this notebook.
+You will also need to have software installed to run and execute an [iPython Notebook](http://ipython.org/notebook.html)
 
-## Dataset
+Udacity recommends our students install [Anaconda](https://www.continuum.io/downloads), a pre-packaged Python distribution that contains all of the necessary libraries and software for this project. 
 
-The dataset refers to clients of a wholesale distributor. It includes the annual spending in monetary units (m.u.) on diverse product categories.
+### Code
 
-It is part of a larger database published with the following paper:
+Template code is provided in the notebook `customer_segments.ipynb` notebook file. Additional supporting code can be found in `renders.py`. While some code has already been implemented to get you started, you will need to implement additional functionality when requested to successfully complete the project.
 
-Abreu, N. (2011). Analise do perfil do cliente Recheio e desenvolvimento de um sistema promocional. Mestrado em Marketing, ISCTE-IUL, Lisbon.
+### Run
 
-## Attributes
+In a terminal or command window, navigate to the top-level project directory `creating_customer_segments/` (that contains this README) and run one of the following commands:
 
-- Fresh: annual spending (m.u.) on fresh products (Continuous)
-- Milk: annual spending (m.u.) on milk products (Continuous)
-- Grocery: annual spending (m.u.)on grocery products (Continuous)
-- Frozen: annual spending (m.u.)on frozen products (Continuous)
-- Detergents_Paper: annual spending (m.u.) on detergents and paper products (Continuous)
-- Delicatessen: annual spending (m.u.)on and delicatessen products (Continuous)
+```ipython notebook customer_segments.ipynb```
+```jupyter notebook customer_segments.ipynb```
 
-## Descriptive statistics
+This will open the iPython Notebook software and project file in your browser.
 
-**Attribute: (Minimum, Maximum, Mean, Std. Deviation)**
+## Data
 
-- Fresh: ( 3, 112151, 12000.30, 12647.329)
-- Milk: (55, 73498, 5796.27, 7380.377)
-- Grocery: (3, 92780, 7951.28, 9503.163)
-- Frozen: (25, 60869, 3071.93, 4854.673)
-- Detergents_Paper: (3, 40827, 2881.49, 4767.854)
-- Delicatessen: (3, 47943, 1524.87, 2820.106)
+The dataset used in this project is included as `customers.csv`. You can find more information on this dataset on the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Wholesale+customers) page.
