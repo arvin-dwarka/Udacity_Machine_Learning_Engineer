@@ -14,7 +14,7 @@ class LearningAgent(Agent):
         # TODO: Initialize any additional variables here
         self.Q_learner = {}
         self.reward = 0
-        self.alpha = 0.1
+        self.alpha = 0.2
         # self.gamma = 0
 
     def reset(self, destination=None):
@@ -59,14 +59,14 @@ class LearningAgent(Agent):
         # print action_prime
 
         # TODO: Learn policy based on state, action, reward
-        # self.state = (('light', inputs['light']), ('next_waypoint', self.next_waypoint))
+        # self.state_prime = (('light', inputs['light']), ('next_waypoint', self.next_waypoint))
         
         # self.Q_learner[(self.state, action)] = \
         #             (1-self.alpha) * \
         #             self.Q_learner.get((self.state, action), 0) + \
         #             self.alpha * \
         #             (reward + \
-        #                 self.gamma * self.Q_learner.get((self.state, action_prime), 0)
+        #                 self.gamma * self.Q_learner.get((self.state_prime, action_prime), 0)
         #                 )
         # print self.Q_learner[(self.state, action)]
 
@@ -90,7 +90,7 @@ def run():
     sim = Simulator(e, update_delay=0, display=False)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
-    sim.run(n_trials=100)  # run for a specified number of trials
+    sim.run(n_trials=100000)  # run for a specified number of trials
     # NOTE: To quit midway, press Esc or close pygame window, or hit Ctrl+C on the command-line
 
 

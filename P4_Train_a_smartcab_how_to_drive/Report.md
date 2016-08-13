@@ -8,13 +8,13 @@ With the basic implementation of the driving agent that takes a random choice of
 
 *Justify why you picked these set of states, and how they model the agent and its environment.*
 
-All the current inputs of light and traffic behaviors as well as the next waypoint information from the route planner were represented. It was very important for the agent to have as much information as possible to learn from. Hence, the lights state allows the learner to understand how to move through the map in an orderly fashion without incurring penalties. The three input of `oncoming`, `left`, and `right` gives the agent a sense of what is happening in the environment with other driving agents. Lastly, the next waypoint enables the agents to learn a sense of direction, which is the most crucial part of being able to reach the target consistently.
+All the current inputs of light and traffic behaviors as well as the next waypoint information from the route planner were represented. It was very important for the agent to have as much information as possible to learn from. Hence, the lights state allows the learner to understand how to move through the map in an orderly fashion without incurring penalties. The three input of `oncoming`, `left`, and `right` gives the agent a sense of what is happening in the environment with other driving agents as it has to obey the traffic rules. Lastly, the next waypoint enables the agents to learn a sense of direction relative to the destination, which is the most crucial part of being able to reach the target consistently.
 
 ## Implement Q-Learning
 
 *What changes do you notice in the agent’s behavior?*
 
-After implementing the Q-Learning algorithm, the driving agent became smarter as it started to be aware of its environment and tries to find the best way to reach the target. Yet, it still was prone to errors and running out of time. Allowing the agent to learn for 10k+ trials only yielded a 35% success rate. It was better than randomly selecting an action, but improvements needed to be made to the learner.
+After implementing the Q-Learning algorithm, the driving agent became smarter as it started to be aware of its environment as it started to follow the traffic rules and it tries to find the a way to reach the target. The smart driving agent is a result of computed Q values that favour and score higher for appropriate actions that lead to the target destination, and that opposes and scores low for illegal actions. Yet, it still was prone to errors and running out of time. Allowing the agent to learn for 10k+ trials only yielded a 35% success rate. It was better than randomly selecting an action, but improvements needed to be made to the learner.
 
 ## Enhance the driving agent
 
@@ -32,5 +32,17 @@ But on further investigation and testing, there appeared no need to incorporate 
 
 >Based on the rewards and penalties it gets, the agent should learn an optimal policy for driving on city roads, obeying traffic rules correctly, and trying to reach the destination within a goal time.
 
-With modifying Q_hat to be the reward value only for the possible action, the Q values promoted the agent to take the best possible action at that point in time in reference to the next way points. While finding the minimum possible route was not promoted, it is likely that in some trials, the agent still takes the shortest way to the target. This improved agent reaches the target 99% of the time.
+On top of the algorithm changes made, the alpha value of between 0 and 0.5 was tuned for the highest trial success rate over 100,000 trials, respectively at 0.1 increments. It was found that the most optimal alpha value was 0.2. At a higher learning rate, the driving agent attempts more random actions in an attempt to explore but this leads to a slightly reduced success rate. The learning rate of 0.2 offers an optimal balance of exploring and execution. A possible improvement could be decaying the learning rate over time where the agent would have high alpha value at the start that decreases as the agents learns the best actions to take.
 
+| alpha | success rate |
+|-------|--------------|
+| 0.0   | 20.000%      |
+| 0.1   | 99.881%      |
+| 0.2   | 99.907%      |
+| 0.3   | 99.858%      |
+| 0.4   | 99.867%      |
+| 0.5   | 99.866%      |
+
+The agent learns quickly to not perform invalid moves in early trials and optimizes itself in that sense. Interestingly, the agent does not encounter oncoming traffic all too often to learn the best way to navigate through a congested environment. This has caused the agent to incur a negative penalty in some rare instances for not following the traffic rules, such as turning into other driving agents. Perhaps this can be rectified by introducing more dummy driving agents in the environment. 
+
+With modifying Q_hat to be the reward value only for the possible action, the Q values promoted the agent to take the best possible action at that point in time in reference to the next way points. While finding the minimum possible route was not promoted, it is likely that in some trials, the agent still takes the shortest way to the target. A fully optimal agent would not perform invalid actions, follow traffic rules, and take the shortest route to the target destination. Still, the current algorithm succeeds at a very high rate of over 99%.
