@@ -48,13 +48,13 @@ The results have four possible ratings: 1,2,3,4.  Each search record is characte
 
 First, an N x N histogram matrix O is constructed, such that Oi,j corresponds to the number of search records that received a rating i by A and a rating j by B. An N-by-N matrix of weights, w, is calculated based on the difference between raters' scores:
 
-![quadratic weighted kappa equation](https://wikimedia.org/api/rest_v1/media/math/render/svg/2a496e1cef7d812b83bdbb725d291748cf0183f5)
+![quadratic weighted kappa equation](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Machine_Learning_Engineer/master/P5_Capstone_Project_Crowdflower_Search_Results_Relevance/kappa_equation_1.png)
 
 An N-by-N histogram matrix of expected ratings, E, is calculated, assuming that there is no correlation between rating scores.  This is calculated as the outer product between each rater's histogram vector of ratings, normalized such that E and O have the same sum.
 
 From these three matrices, the quadratic weighted kappa is calculated as: 
 
-![quadratic weighted kappa equation](https://wikimedia.org/api/rest_v1/media/math/render/svg/2a496e1cef7d812b83bdbb725d291748cf0183f5)
+![quadratic weighted kappa equation](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Machine_Learning_Engineer/master/P5_Capstone_Project_Crowdflower_Search_Results_Relevance/kappa_equation_2.png)
 
 
 ## Analysis
@@ -69,6 +69,8 @@ If a dataset is not present for this problem, has discussion been made about the
 Are there any abnormalities or characteristics about the input space or dataset that need to be addressed? (categorical variables, missing values, outliers, etc.)
 
 ### Exploratory Visualization
+
+![Word Count Distribution in Product Description](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Machine_Learning_Engineer/master/P5_Capstone_Project_Crowdflower_Search_Results_Relevance/word_count_dist_product_description.png)
 
 In this section, you will need to provide some form of visualization that summarizes or extracts a relevant characteristic or feature about the data. The visualization should adequately support the data being used. Discuss why this visualization was chosen and how it is relevant. Questions to ask yourself when writing this section:
 Have you visualized a relevant characteristic or feature about the dataset or input data?
@@ -237,32 +239,16 @@ The goal of this project was to predict search relevance of test data after trai
 
 The pre-processing portion included cleaning the dataset of NaN values, removing html tags and special characters, parsing the dataset of non-alphanumeric characters, reducing words to their base form through stemming, and removing stop words. This was an interesting part as I learned how to handle noisy, real-world data. I found myself spending a lot more time here than expected as I explored the dataset and found unexpected characters and words. Though, it was fun learning how to elegantly parse through text and output a workable corpus.
 
-The modeling piece was fairly straight forward to me, save for the vectorizer. 
+The modeling piece was fairly straight forward to me, save for the vectorizer. Here the cleaned data was vectorized using the TD-IDF vectorizer with ngrams of 1-4. This converted the text data to numerical data, and also kept some of the spacial information intact with the ngrams. After that, an SVM Pipeline was setup where the feature set was truncated, standardized, and then fitted with an SVM model. The other two models used were NB and SGD. The three chosen models were tuned extensively using a Grid Search Cross Validation technique that optimized for the best quadratic weighted kappa score across an array of given parameters. The best parameters were updated in the model and five-fold cross validation training and testing were performed to test the generalizability of the algorithms and their performances.
 
-In this section, you will summarize the entire end-to-end problem solution and discuss one or two particular aspects of the project you found interesting or difficult. You are expected to reflect on the project as a whole to show that you have a firm understanding of the entire process employed in your work. Questions to ask yourself when writing this section:
-Have you thoroughly summarized the entire process you used for this project?
-Were there any interesting aspects of the project?
-Were there any difficult aspects of the project?
-Does the final model and solution fit your expectations for the problem, and should it be used in a general setting to solve these types of problems?
+The ensembling technique was completely novel to me, and was a complex but fun process to learn. The biggest hurdle was understanding how to deal with the data structures present to compute the values needed. After much research and trial, using the cross validated datasets of the three models, a tuple of three weights were selected that gave the max quadratic weighted kappa score. The selection process was done by iterating through all possible combinations of a set of floats between 0 and 1, and computing the kappa score. The best weights had the highest corresponding kappa score of 0.463531102751. The predictions of the SVM Pipeline, NB and SGD were weighted 0.25, 0.25 and 0.5, respectively. That ensembled prediction was then rounded before submitted for final evaluation on the Kaggle leaderboard. It received a score of 0.48710, which is 43% higher that the benchmark score of 0.34125. As such, it can be used to test search relevance of queries.
+
 
 ### Improvement
+
+The biggest area of improvement is the feature engineering. In this project, I vectorized the whole corpus and modeled off it directly. Looking through some of the Kaggle post on the competition, I appears that the correlation or distance between query and product title/description is a strong predictor of search relevance. 
 
 In this section, you will need to provide discussion as to how one aspect of the implementation you designed could be improved. As an example, consider ways your implementation can be made more general, and what would need to be modified. You do not need to make this improvement, but the potential solutions resulting from these changes are considered and compared/contrasted to your current solution. Questions to ask yourself when writing this section:
 Are there further improvements that could be made on the algorithms or techniques you used in this project?
 Were there algorithms or techniques you researched that you did not know how to implement, but would consider using if you knew how?
 If you used your final solution as the new benchmark, do you think an even better solution exists?
-
-
-
-Before submitting your report, ask yourself…
-Does the project report you’ve written follow a well-organized structure similar to that of the project template?
-Is each section (particularly Analysis and Methodology) written in a clear, concise and specific fashion? Are there any ambiguous terms or phrases that need clarification?
-Would the intended audience of your project be able to understand your analysis, methods, and results?
-Have you properly proof-read your project report to assure there are minimal grammatical and spelling mistakes?
-Are all the resources used for this project correctly cited and referenced?
-Is the code that implements your solution easily readable and properly commented?
-Does the code execute without error and produce results similar to those reported?
-
-
-
-https://www.toptal.com/machine-learning/ensemble-methods-machine-learning
