@@ -70,9 +70,17 @@ A good place to start exploring, is by looking at the head of the dataset (a sam
 
 The following are some snippets of noisy text that would require cleaning:
 
-```WTGR1011\nFeatures\nNickel base, 60,000 average hours, acrylic resin bulb material\nChristmas light bulb\nSteady dimmable replacement lamps\nNickel bases prevent corrosion in sockets\nWattage: 0.96 Watts\nVoltage: 130 Volts\nDimmable: Yes\nLight Source: LED\nBulb Shape Type: Candle\n\nColor Amber\nBulb Color: Amber```
-```'ITEM#: 13308316\nProtect your passport and stay organized with this sleek, low profile folio. This folio features one clear pocket for your passport and five additional pockets for business, credit or travel cards.'```
-```'Linksys Smart Wi-Fi Router with wireless AC technology\n2.4/5 GHZ dual band wireless\nCompatible with 802.11a/b/g/n/ac WiFi\nSecurity protocols supported\n3 external antennae\n4 Ethernet ports\nCompatible with Windows 7 and 8'```
+```
+WTGR1011\nFeatures\nNickel base, 60,000 average hours, acrylic resin bulb material\nChristmas light bulb\nSteady dimmable replacement lamps\nNickel bases prevent corrosion in sockets\nWattage: 0.96 Watts\nVoltage: 130 Volts\nDimmable: Yes\nLight Source: LED\nBulb Shape Type: Candle\n\nColor Amber\nBulb Color: Amber
+```
+
+```
+'ITEM#: 13308316\nProtect your passport and stay organized with this sleek, low profile folio. This folio features one clear pocket for your passport and five additional pockets for business, credit or travel cards.'
+```
+
+```
+'Linksys Smart Wi-Fi Router with wireless AC technology\n2.4/5 GHZ dual band wireless\nCompatible with 802.11a/b/g/n/ac WiFi\nSecurity protocols supported\n3 external antennae\n4 Ethernet ports\nCompatible with Windows 7 and 8'
+```
 
 As observed, there are a fair bit of new line separators (`\n`) for HTML styling that would need to be addressed. Secondly, puctuations and special characters would need to be removed. Lastly, and understandably, there are multiple variations of words, such as print, printing, printable, and prints that should be grouped together - this can be addressed by stemming (discussed below).
 
