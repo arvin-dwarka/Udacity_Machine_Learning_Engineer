@@ -1,9 +1,13 @@
 
-Capstone Project
-Machine Learning Engineer Nanodegree
-Arvin Dwarka
-September 10th, 2016
-[Crowdflower Search Results Relevance](https://www.kaggle.com/c/crowdflower-search-relevance)
+Capstone Project 
+
+Machine Learning Engineer Nanodegree 
+
+Arvin Dwarka 
+
+September 10th, 2016 
+
+[Crowdflower Search Results Relevance](https://www.kaggle.com/c/crowdflower-search-relevance) 
 
 ## Definition
 
@@ -62,20 +66,27 @@ From these three matrices, the quadratic weighted kappa is calculated as:
 
 ### Data Exploration
 
-In this section, you will be expected to analyze the data you are using for the problem. This data can either be in the form of a dataset (or datasets), input data (or input files), or even an environment. The type of data should be thoroughly described and, if possible, have basic statistics and information presented (such as discussion of input features or defining characteristics about the input or environment). Any abnormalities or interesting qualities about the data that may need to be addressed have been identified (such as features that need to be transformed or the possibility of outliers). Questions to ask yourself when writing this section:
-If a dataset is present for this problem, have you thoroughly discussed certain features about the dataset? Has a data sample been provided to the reader?
-If a dataset is present for this problem, are statistics about the dataset calculated and reported? Have any relevant results from this calculation been discussed?
-If a dataset is not present for this problem, has discussion been made about the input space or input data for your problem?
-Are there any abnormalities or characteristics about the input space or dataset that need to be addressed? (categorical variables, missing values, outliers, etc.)
+A good place to start exploring, is by looking at the head of the dataset (a sample is not highlighted here due to the length texts). We can easily pick out some abnormalities in the dataset that would need pre-processing, such as special characters `itâ€™ll`, `dÃ©cor` and `\n`.
+
+The following are some snippets of noisy text that would require cleaning:
+
+```WTGR1011\nFeatures\nNickel base, 60,000 average hours, acrylic resin bulb material\nChristmas light bulb\nSteady dimmable replacement lamps\nNickel bases prevent corrosion in sockets\nWattage: 0.96 Watts\nVoltage: 130 Volts\nDimmable: Yes\nLight Source: LED\nBulb Shape Type: Candle\n\nColor Amber\nBulb Color: Amber```
+```'ITEM#: 13308316\nProtect your passport and stay organized with this sleek, low profile folio. This folio features one clear pocket for your passport and five additional pockets for business, credit or travel cards.'```
+```'Linksys Smart Wi-Fi Router with wireless AC technology\n2.4/5 GHZ dual band wireless\nCompatible with 802.11a/b/g/n/ac WiFi\nSecurity protocols supported\n3 external antennae\n4 Ethernet ports\nCompatible with Windows 7 and 8'```
+
+As observed, there are a fair bit of new line separators (`\n`) for HTML styling that would need to be addressed. Secondly, puctuations and special characters would need to be removed. Lastly, and understandably, there are multiple variations of words, such as print, printing, printable, and prints that should be grouped together - this can be addressed by stemming (discussed below).
+
+Diving into the dataset some more, we can observe that the product descriptions are not available for all. Out of the 10158 records, 2444 had missing values (NaN), which makes up 24% of the records. This represent a significant imbalance in the dataset. To overcome this, I will look into clearing out the NaN values and then concatenating the query, product titles and product descriptions prior to vectorizing to enrich the corpus as much as possible.
+
+The target, `median_relevance` had a mean of 3.309805 and a standard deviation of 0.980666. The score of 4 indicates the item completely satisfies the search query. Since the mean is so high, it makes sense that the metric used in this project is not a precision score. That would have enabled algorithms to overfit.
+
 
 ### Exploratory Visualization
 
 ![Word Count Distribution in Product Description](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Machine_Learning_Engineer/master/P5_Capstone_Project_Crowdflower_Search_Results_Relevance/word_count_dist_product_description.png)
 
-In this section, you will need to provide some form of visualization that summarizes or extracts a relevant characteristic or feature about the data. The visualization should adequately support the data being used. Discuss why this visualization was chosen and how it is relevant. Questions to ask yourself when writing this section:
-Have you visualized a relevant characteristic or feature about the dataset or input data?
-Is the visualization thoroughly analyzed and discussed?
-If a plot is provided, are the axes, title, and datum clearly defined?
+The figure about shows the word count distribution of product descriptions in the training dataset. The graph is skewed to the right with a fairly long tail. This is particular interesting as I would have assumed that there would have been some strict word restrictions on a product webpage. It could potentially complicate things during the vectorizing phase as it might blow up the vector size. To mitigate this, I might either truncate the vector size or reduce the words feeding into the vectorizer. I have a preference for the former as the latter leads to loss in information.
+
 
 ### Algorithms and Techniques
 
@@ -123,7 +134,9 @@ Lastly, I also removed stop words from the corpus. Stop words are words that app
 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how',
 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no',
 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can',
-'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn', 'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn']
+'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 
+'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn', 'ma', 'mightn', 
+'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn']
 ```
 
 The idea is to penalize the total count of a word in a document by the number of its appearance in all of the documents. The higher this number the less valuable the word is – it contains less information that can identify the document. In the extreme case, where the word appears in large fraction of the documents, usually it is even better to completely eliminate the count. This is known as stop words, or corpus specific stop words.
@@ -246,9 +259,6 @@ The ensembling technique was completely novel to me, and was a complex but fun p
 
 ### Improvement
 
-The biggest area of improvement is the feature engineering. In this project, I vectorized the whole corpus and modeled off it directly. Looking through some of the Kaggle post on the competition, I appears that the correlation or distance between query and product title/description is a strong predictor of search relevance. 
+The biggest area of improvement is the feature engineering. In this project, I vectorized the whole corpus and modeled off it directly. Looking through some of the Kaggle post on the competition and the [write up from the winner](https://github.com/ChenglongChen/Kaggle_CrowdFlower/blob/master/Doc/Kaggle_CrowdFlower_ChenglongChen.pdf), it appears that the correlation or distance between query and product title/description is a strong predictor of search relevance. Jaccard coefficient and Dice discance can be used as distance metric measures, which could be used to group similar samples together. This would allow a better performance on clustering algorithms like SVM.
 
-In this section, you will need to provide discussion as to how one aspect of the implementation you designed could be improved. As an example, consider ways your implementation can be made more general, and what would need to be modified. You do not need to make this improvement, but the potential solutions resulting from these changes are considered and compared/contrasted to your current solution. Questions to ask yourself when writing this section:
-Are there further improvements that could be made on the algorithms or techniques you used in this project?
-Were there algorithms or techniques you researched that you did not know how to implement, but would consider using if you knew how?
-If you used your final solution as the new benchmark, do you think an even better solution exists?
+A notable mention that could have improved the output here would be to perform spelling correction and synonym replacements on the text data. Lastly, there was much praise given to [XGBoost](https://github.com/dmlc/xgboost) and neural network algorithms as they then to score well in this competition. Perhaps the most telling is the winner's comments on XGBoost, "...the best single model we have obtained during the competition was an XGBoost model with linear booster... score 0.70768." They were not attempted here, but it does appear that their proper implementation could very much out-perform the best score obtained.
