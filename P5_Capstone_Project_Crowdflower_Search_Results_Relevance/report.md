@@ -1,13 +1,10 @@
 
-Capstone Project 
-
-Machine Learning Engineer Nanodegree 
+Capstone Project - Machine Learning Engineer Nanodegree - [Crowdflower Search Results Relevance](https://www.kaggle.com/c/crowdflower-search-relevance)
 
 Arvin Dwarka 
 
 September 10th, 2016 
 
-[Crowdflower Search Results Relevance](https://www.kaggle.com/c/crowdflower-search-relevance) 
 
 ## Definition
 
@@ -162,12 +159,61 @@ NB and SCG were comparatively much easier to work with. Since they both had simp
 
 The cross validated outputs were used in the ensembling phase to determine the weights to be assigned to each model. The weight vectors were generated from a combination of the following five numbers: 0, 0.1, 0.25, 0.5, 0.2, 1.0. All possible combination were attempted on cross validated output. The max weights were selected by tuning for the maximum quadratic weighted kappa score. This max weight was then applied respectively to the three models' predictions of the test dataset. Once the values were rounded, they were submitted to the Kaggle leaderboard for final evaluation. The models were tuned to optimize for higher kappa score, and with an aim to outperform the benchmark score.
 
+The following is an implementation steps carried out in this project:
+
+1. load datasets in a pandas dataframe 
+2. parse the query, product title and product description columns using 
+	- the BeautifulSoup library to remove html tags
+	- a regular expression to remove non-alphanumeric characters
+	- the Snowball stemmer library to reduce words to their base form
+	- the Stopwords library to remove high frequency stop words
+3. concatenate query, product title and product description together as the feature set 
+4. assign median relevance as the target 
+5. split the training dataset using the Stratified K-fold function for model cross validation (not for performing predictions on the test dataset) 
+6. vectorize the feature set using TD-IDF vectorizer with 1 to 4 ngrams 
+7. fit the models with the vectorized data 
+8. predict median relevance target 
+9. compute quadratic weighted kappa scores 
+10. tune the model parameters using a Grid Search Cross Validation method if needed, and repeat steps 5 to 8 unti a satisfactory score is received 
+11. update model parameters for final predictions of the test dataset 
+12. vectorize the entire training features together and fit to the models 
+13. predict the median relevance from the test dataset features 
+14. determine weightages to be used on the three models by optimizing for the higest quadratic weighted kappa score 
+15. use the max weights to ensemble the three models' output together 
+16. submit to the [Kaggle competition](https://www.kaggle.com/c/crowdflower-search-relevance/submissions/attach) to evaluate performance against the benchmark 
+
 
 ### Refinement
 
 There were two main parts that were refined for the final version: the models, and the vectorizer.
 
 The models were tuned using a [Grid Search Cross Validation](http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html) technique that exhaustively searches over specified parameter values. A dictionary object would be inputted, full of various parameter combination, to the Grid Search function that would test out all possible combinations. It would optimize for the highest quadratic weighted kappa score. An example of this where the NB model is tuned for the alpha value is available in the code base, but commented out to preserve computing efficiency. Notable parameters were capping the number of components to 400 on TruncatedSVD function, using a 0.0015 alpha value on the NB model, and using a modified huber loss function on the SGD model.
+
+The following are the models and their parameters that were tuned:
+
+- SVM Pipeline:
+	- `TruncatedSVD`:
+		- `n_components` (number of components)
+	- `StandardScaler`:
+		- `with_std` (scale the data to unit variance)
+	- `SVC`:
+		- `C` (Penalty parameter C of the error term) 
+		- `kernel` (kernel type to be used in the algorithm) 
+		- `gamma` (kernel coefficient) 
+- NB:
+	- `alpha` (additive (Laplace/Lidstone) smoothing parameter)
+- SGD:
+	- `loss` (the loss function to be used)
+	- `n_iter` (the number of passed over the training data performed)
+	- `shuffle` (whether or not the training data should be shuffled after each epoch)
+
+These are the results before and after tuning the models:
+
+| Model        | Before tuning | After tuning |
+|--------------|---------------|--------------|
+| SVM Pipeline | 0.310         | 0.437        |
+| NB           | 0.127         | 0.413        |
+| SGD          | 0.322         | 0.412        |
 
 The TF-IDF vectorizer was refined mainly for the minimum document frequency (min_df), and the ngram range. The min_df is important when building the vocabulary of vectors such that it sets a cut-off point on terms that have a document frequency lower than that specified. It was found, after much trial, that a default value of 1 actually resulted in the best performance. The other parameter tuned was the n-gram, which is a contiguous sequence of n items from a given sequence of text or speech. The n_gram range specifies the lower and upper boundary of the range of n-values for different n-grams to be extracted. The best value was (1,4) that produced a sense of continuation in the data by preserving some distance relations of words.
 
@@ -249,10 +295,33 @@ The final ensembled predictions gave a score of 0.48710, which is higher that th
 
 ### Free-Form Visualization
 
-In this section, you will need to provide some form of visualization that emphasizes an important quality about the project. It is much more free-form, but should reasonably support a significant result or characteristic about the problem that you want to discuss. Questions to ask yourself when writing this section:
-Have you visualized a relevant or important quality about the problem, dataset, input data, or results?
-Is the visualization thoroughly analyzed and discussed?
-If a plot is provided, are the axes, title, and datum clearly defined?
+A good way to familiarize oneself with a metric is to try it out on a sandbox example and to tinker with it slightly. The snippet below is the output of this test to see how the quadratic weighted kappa score would react to slightly different predictions in comparison to more familiar metrics.
+
+```
+ONE EXTREME ERROR
+Ground truth:	[1 2 3 1 4 4 4 4 4 4]
+Predicted   :	[4 2 3 1 4 4 4 4 4 4]
+MAE         :	0.3
+Accuracy    :	0.9
+Kappa       :	0.656488549618
+
+FIVE SMALL ERRORS
+Ground truth:	[1 2 3 1 4 4 4 4 4 4]
+Predicted   :	[1 2 3 1 4 3 3 3 3 2]
+MAE         :	0.6
+Accuracy    :	0.5
+Kappa       :	0.703703703704
+
+KAPPA CHANGES WHEN DISTRIBUTION CHANGES
+Ground truth:	[1 1 3 1 4 4 4 4 4 4]
+Predicted   :	[1 1 3 1 4 3 3 3 3 2]
+MAE         :	0.6
+Accuracy    :	0.5
+Kappa       :	0.75
+```
+
+The biggest takeaway was that a single big mistaken prediction can damage the score more than 50% small mistaken predictions. The winner of the competition, Chenglong Chen, showed on the [blog](http://blog.kaggle.com/2015/07/27/crowdflower-winners-interview-1st-place-chenglong-chen/) that he had an understanding of the instability of the metric too. He used this knowledge to increase the number of bagged ensemble models and actively tried to combat this instability. The understanding of the metric and using the ensemble technique gave the winner an edge. This heavily influenced my decision to try out an ensemble of algorithms in this project.
+
 
 ### Reflection
 
