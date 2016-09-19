@@ -1,3 +1,6 @@
+![Certificate](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Machine_Learning_Engineer/master/certificate.jpeg)
+
+
 # Udacity Machine Learning Engineer
 
 This repository contains projects for Udacity's Machine Learning Engineer Program.
